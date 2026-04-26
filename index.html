@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>꿀건강 큐레이션 - 관리자 보안 모드</title>
     <style>
-        /* 폰트 및 파스텔 컬러 설정 */
+        /* =========================================
+           1. CSS 변수 및 초기화
+           ========================================= */
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
         :root {
@@ -19,6 +21,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             font-family: 'Pretendard', sans-serif;
             background-color: var(--soft-gray);
@@ -33,7 +36,9 @@
             padding: 0 16px;
         }
 
-        /* 상단 대문 */
+        /* =========================================
+           2. 헤더 및 네비게이션 스타일
+           ========================================= */
         header {
             margin: 16px;
             height: 35vh;
@@ -65,18 +70,19 @@
             margin-bottom: 12px;
         }
 
-        /* 카테고리 메뉴 */
         .nav-wrap { 
             overflow-x: auto; 
             white-space: nowrap; 
             padding-bottom: 10px;
         }
         .nav-wrap::-webkit-scrollbar { display: none; }
+        
         .nav-links {
             list-style: none;
             display: inline-flex;
             gap: 8px;
         }
+        
         .nav-links li button {
             appearance: none;
             background: white;
@@ -89,13 +95,16 @@
             cursor: pointer;
             transition: all 0.2s;
         }
+        
         .nav-links li button.active {
             background: var(--point-blue);
             color: white;
             border-color: var(--point-blue);
         }
 
-        /* 관리자 패널 스타일 */
+        /* =========================================
+           3. 관리자 패널 스타일
+           ========================================= */
         .admin-toggle-btn {
             position: fixed;
             top: 20px;
@@ -125,6 +134,7 @@
             gap: 12px;
             grid-template-columns: 1fr 1fr;
         }
+        
         .admin-form input, .admin-form select {
             padding: 12px;
             border: 1px solid #ddd;
@@ -132,28 +142,29 @@
             font-size: 14px;
             width: 100%;
         }
+        
         .admin-form .full { grid-column: span 2; }
         
-        /* 파일 업로드 스타일 커스텀 */
         .file-upload-wrapper {
             grid-column: span 2;
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
+        
         .file-label {
             font-size: 13px;
             font-weight: 700;
             color: var(--admin-color);
         }
+        
         .file-input-group {
             display: flex;
             gap: 10px;
             align-items: center;
         }
-        #p-file {
-            flex: 1;
-        }
+        
+        #p-file { flex: 1; }
 
         .admin-form button#save-btn {
             grid-column: span 2;
@@ -167,9 +178,18 @@
             margin-top: 10px;
         }
 
-        /* 상품 그리드 */
+        /* =========================================
+           4. 상품 카드 및 그리드 스타일
+           ========================================= */
         main { padding: 32px 0; }
-        .section-title { font-size: 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        
+        .section-title { 
+            font-size: 20px; 
+            margin-bottom: 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
 
         .product-grid {
             display: grid;
@@ -201,6 +221,7 @@
             align-items: center;
             justify-content: center;
         }
+        
         .product-img img { width: 100%; height: 100%; object-fit: cover; }
 
         .badge {
@@ -214,8 +235,21 @@
             z-index: 5;
         }
 
-        .product-name { font-weight: 700; font-size: 16px; margin-bottom: 6px; color: #333; height: 2.8em; overflow: hidden; }
-        .product-price { color: #FF4D6D; font-weight: 800; font-size: 18px; margin-bottom: 12px; }
+        .product-name { 
+            font-weight: 700; 
+            font-size: 16px; 
+            margin-bottom: 6px; 
+            color: #333; 
+            height: 2.8em; 
+            overflow: hidden; 
+        }
+        
+        .product-price { 
+            color: #FF4D6D; 
+            font-weight: 800; 
+            font-size: 18px; 
+            margin-bottom: 12px; 
+        }
 
         .buy-btn {
             display: block;
@@ -229,12 +263,13 @@
             margin-top: auto;
         }
 
-        /* 관리자 액션 버튼 */
+        /* 관리자용 액션 버튼 */
         .admin-actions {
             margin-top: 10px;
             display: none;
             gap: 5px;
         }
+        
         .admin-actions button {
             flex: 1;
             padding: 5px;
@@ -244,6 +279,7 @@
             cursor: pointer;
             background: #fdfdfd;
         }
+        
         .del-btn { color: #ff4d4d; }
 
         footer { padding: 40px 16px; text-align: center; color: #bbb; font-size: 12px; }
@@ -251,266 +287,274 @@
 </head>
 <body>
 
-<button id="admin-main-btn" class="admin-toggle-btn" onclick="handleAdminToggle()">관리자 접속</button>
+    <!-- 관리자 접속 버튼 -->
+    <button id="admin-main-btn" class="admin-toggle-btn" onclick="handleAdminToggle()">관리자 접속</button>
 
-<header class="container">
-    <div class="header-content">
-        <a href="javascript:filterCategory('전체')" class="blog-name">🍯 꿀건강 큐레이션</a>
-        <div class="nav-wrap">
-            <ul class="nav-links" id="category-menu">
-                <li><button class="active" onclick="filterCategory('전체')">전체</button></li>
-                <li><button onclick="filterCategory('식단관리')">식단관리</button></li>
-                <li><button onclick="filterCategory('영양제')">영양제</button></li>
-                <li><button onclick="filterCategory('운동기구')">운동기구</button></li>
-                <li><button onclick="filterCategory('홈트')">홈트</button></li>
-                <li><button onclick="filterCategory('멘탈케어')">멘탈케어</button></li>
-            </ul>
+    <!-- 1. 헤더 영역 -->
+    <header class="container">
+        <div class="header-content">
+            <a href="javascript:filterCategory('전체')" class="blog-name">🍯 꿀건강 큐레이션</a>
+            <nav class="nav-wrap">
+                <ul class="nav-links" id="category-menu">
+                    <li><button class="active" onclick="filterCategory('전체')">전체</button></li>
+                    <li><button onclick="filterCategory('식단관리')">식단관리</button></li>
+                    <li><button onclick="filterCategory('영양제')">영양제</button></li>
+                    <li><button onclick="filterCategory('운동기구')">운동기구</button></li>
+                    <li><button onclick="filterCategory('홈트')">홈트</button></li>
+                    <li><button onclick="filterCategory('멘탈케어')">멘탈케어</button></li>
+                </ul>
+            </nav>
         </div>
-    </div>
-</header>
+    </header>
 
-<!-- 관리자 패널 -->
-<div id="admin-panel" class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h3 style="color:var(--admin-color);">📦 상품 관리 도구</h3>
-        <button onclick="logoutAdmin()" style="background: #eee; border:none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px;">로그아웃</button>
-    </div>
-    <div class="admin-form">
-        <input type="hidden" id="edit-id">
-        <input type="text" id="p-name" placeholder="상품명" class="full">
-        <input type="text" id="p-price" placeholder="가격 (예: 24,900원)">
-        <select id="p-category">
-            <option value="식단관리">식단관리</option>
-            <option value="영양제">영양제</option>
-            <option value="운동기구">운동기구</option>
-            <option value="홈트">홈트</option>
-            <option value="멘탈케어">멘탈케어</option>
-        </select>
-        <select id="p-badge">
-            <option value="추천">추천</option>
-            <option value="BEST">BEST</option>
-            <option value="인기">인기</option>
-            <option value="신상">신상</option>
-        </select>
-        
-        <div class="file-upload-wrapper full">
-            <label class="file-label">📸 상품 이미지 등록</label>
-            <div class="file-input-group">
-                <input type="file" id="p-file" accept="image/*" onchange="handleFileSelect(this)">
-                <span style="font-size: 12px; color: #999;">또는</span>
-            </div>
-            <input type="text" id="p-image" placeholder="이미지 URL 주소를 직접 입력하세요">
+    <!-- 2. 관리자 패널 영역 -->
+    <section id="admin-panel" class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="color:var(--admin-color);">📦 상품 관리 도구</h3>
+            <button onclick="logoutAdmin()" style="background: #eee; border:none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px;">로그아웃</button>
         </div>
-        
-        <input type="text" id="p-link" placeholder="쿠팡 파트너스 링크" class="full">
-        <button id="save-btn" onclick="saveProduct()">상품 등록/수정하기</button>
-    </div>
-</div>
-
-<main class="container">
-    <h2 class="section-title" id="current-category-title">✨ 오늘의 추천 건강템</h2>
-    <div id="product-list" class="product-grid">
-        <!-- 자바스크립트로 렌더링됨 -->
-    </div>
-</main>
-
-<footer>
-    <p>&copy; 2026 꿀건강 큐레이션. 이 포스팅은 쿠팡 파트너스 활동의 일환으로 일정액의 수수료를 제공받을 수 있습니다.</p>
-</footer>
-
-<script>
-    const adminPassword = "1234"; 
-    let isAdminAuthenticated = false;
-    let selectedFileBase64 = "";
-    let currentCategory = "전체";
-
-    const initialProducts = [
-        { id: 1, name: "고함량 비타민 C 3000mg", price: "24,900원", badge: "추천", category: "영양제", img: "https://via.placeholder.com/300", link: "#" },
-        { id: 2, name: "TPE 논슬립 요가매트", price: "18,500원", badge: "BEST", category: "운동기구", img: "https://via.placeholder.com/300", link: "#" },
-        { id: 3, name: "닭가슴살 스테이크 10팩", price: "15,900원", badge: "신상", category: "식단관리", img: "https://via.placeholder.com/300", link: "#" }
-    ];
-
-    let products = JSON.parse(localStorage.getItem('myProducts')) || initialProducts;
-
-    function handleFileSelect(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                selectedFileBase64 = e.target.result;
-                document.getElementById('p-image').value = "";
-                document.getElementById('p-image').placeholder = "파일이 선택되었습니다.";
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
-    function handleAdminToggle() {
-        if (!isAdminAuthenticated) {
-            const inputPw = prompt("관리자 비밀번호를 입력해주세요.");
-            if (inputPw === adminPassword) {
-                isAdminAuthenticated = true;
-                alert("인증되었습니다.");
-                showAdminPanel();
-            } else if (inputPw !== null) {
-                alert("비밀번호가 틀렸습니다.");
-            }
-        } else {
-            toggleAdminPanel();
-        }
-    }
-
-    function showAdminPanel() {
-        document.getElementById('admin-panel').style.display = 'block';
-        document.getElementById('admin-main-btn').innerText = "관리자 도구 닫기";
-        renderProducts();
-    }
-
-    function toggleAdminPanel() {
-        const panel = document.getElementById('admin-panel');
-        if (panel.style.display === 'block') {
-            panel.style.display = 'none';
-            document.getElementById('admin-main-btn').innerText = "관리자 도구 열기";
-        } else {
-            panel.style.display = 'block';
-            document.getElementById('admin-main-btn').innerText = "관리자 도구 닫기";
-        }
-        renderProducts();
-    }
-
-    function logoutAdmin() {
-        isAdminAuthenticated = false;
-        document.getElementById('admin-panel').style.display = 'none';
-        document.getElementById('admin-main-btn').innerText = "관리자 접속";
-        alert("로그아웃 되었습니다.");
-        renderProducts();
-    }
-
-    // 카테고리 필터링 기능
-    function filterCategory(category) {
-        currentCategory = category;
-        
-        // 버튼 활성화 스타일 변경
-        const buttons = document.querySelectorAll('#category-menu button');
-        buttons.forEach(btn => {
-            if (btn.innerText === category) btn.classList.add('active');
-            else btn.classList.remove('active');
-        });
-
-        // 제목 변경
-        const title = document.getElementById('current-category-title');
-        title.innerText = category === '전체' ? '✨ 오늘의 추천 건강템' : `🔍 ${category} 추천 아이템`;
-
-        renderProducts();
-    }
-
-    function renderProducts() {
-        const list = document.getElementById('product-list');
-        list.innerHTML = '';
-
-        // 필터링된 리스트 생성
-        const filteredProducts = currentCategory === "전체" 
-            ? products 
-            : products.filter(p => p.category === currentCategory);
-
-        if (filteredProducts.length === 0) {
-            list.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 50px; color: #999;">이 카테고리에는 아직 상품이 없습니다.</p>`;
-        }
-
-        filteredProducts.forEach(p => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
+        <div class="admin-form">
+            <input type="hidden" id="edit-id">
+            <input type="text" id="p-name" placeholder="상품명" class="full">
+            <input type="text" id="p-price" placeholder="가격 (예: 24,900원)">
             
-            const adminActionsDisplay = (isAdminAuthenticated && document.getElementById('admin-panel').style.display === 'block') ? 'flex' : 'none';
-
-            card.innerHTML = `
-                <span class="badge">${p.badge}</span>
-                <a href="${p.link}" class="product-link" target="_blank">
-                    <div class="product-img">
-                        <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300?text=이미지+오류'">
-                    </div>
-                    <h3 class="product-name">${p.name}</h3>
-                </a>
-                <p class="product-price">${p.price}</p>
-                <a href="${p.link}" class="buy-btn" target="_blank">쿠팡 최저가 확인하기</a>
-                <div class="admin-actions" style="display:${adminActionsDisplay}">
-                    <button onclick="editProduct(${p.id})">수정</button>
-                    <button class="del-btn" onclick="deleteProduct(${p.id})">삭제</button>
+            <select id="p-category">
+                <option value="식단관리">식단관리</option>
+                <option value="영양제">영양제</option>
+                <option value="운동기구">운동기구</option>
+                <option value="홈트">홈트</option>
+                <option value="멘탈케어">멘탈케어</option>
+            </select>
+            
+            <select id="p-badge">
+                <option value="추천">추천</option>
+                <option value="BEST">BEST</option>
+                <option value="인기">인기</option>
+                <option value="신상">신상</option>
+            </select>
+            
+            <div class="file-upload-wrapper full">
+                <label class="file-label">📸 상품 이미지 등록</label>
+                <div class="file-input-group">
+                    <input type="file" id="p-file" accept="image/*" onchange="handleFileSelect(this)">
+                    <span style="font-size: 12px; color: #999;">또는</span>
                 </div>
-            `;
-            list.appendChild(card);
-        });
-        localStorage.setItem('myProducts', JSON.stringify(products));
-    }
+                <input type="text" id="p-image" placeholder="이미지 URL 주소를 직접 입력하세요">
+            </div>
+            
+            <input type="text" id="p-link" placeholder="쿠팡 파트너스 링크" class="full">
+            <button id="save-btn" onclick="saveProduct()">상품 등록/수정하기</button>
+        </div>
+    </section>
 
-    function saveProduct() {
-        if (!isAdminAuthenticated) return alert("권한이 없습니다.");
+    <!-- 3. 메인 상품 리스트 영역 -->
+    <main class="container">
+        <h2 class="section-title" id="current-category-title">✨ 오늘의 추천 건강템</h2>
+        <div id="product-list" class="product-grid">
+            <!-- 자바스크립트로 렌더링됨 -->
+        </div>
+    </main>
 
-        const id = document.getElementById('edit-id').value;
-        const name = document.getElementById('p-name').value;
-        const price = document.getElementById('p-price').value;
-        const category = document.getElementById('p-category').value;
-        const badge = document.getElementById('p-badge').value;
-        const urlImg = document.getElementById('p-image').value;
-        const link = document.getElementById('p-link').value || '#';
+    <!-- 4. 푸터 영역 -->
+    <footer>
+        <p>&copy; 2026 꿀건강 큐레이션. 이 포스팅은 쿠팡 파트너스 활동의 일환으로 일정액의 수수료를 제공받을 수 있습니다.</p>
+    </footer>
 
-        let finalImg = selectedFileBase64 || urlImg || 'https://via.placeholder.com/300';
+    <!-- =========================================
+         5. 자바스크립트 로직
+         ========================================= -->
+    <script>
+        const adminPassword = "1234"; 
+        let isAdminAuthenticated = false;
+        let selectedFileBase64 = "";
+        let currentCategory = "전체";
 
-        if(!name || !price) return alert('상품명과 가격을 입력해주세요!');
+        // 초기 샘플 데이터
+        const initialProducts = [
+            { id: 1, name: "고함량 비타민 C 3000mg", price: "24,900원", badge: "추천", category: "영양제", img: "https://via.placeholder.com/300", link: "#" },
+            { id: 2, name: "TPE 논슬립 요가매트", price: "18,500원", badge: "BEST", category: "운동기구", img: "https://via.placeholder.com/300", link: "#" },
+            { id: 3, name: "닭가슴살 스테이크 10팩", price: "15,900원", badge: "신상", category: "식단관리", img: "https://via.placeholder.com/300", link: "#" }
+        ];
 
-        if (id) {
-            const index = products.findIndex(p => p.id == id);
-            if (!selectedFileBase64 && !urlImg) finalImg = products[index].img;
-            products[index] = { id: Number(id), name, price, category, badge, img: finalImg, link };
-        } else {
-            const newId = Date.now();
-            products.push({ id: newId, name, price, category, badge, img: finalImg, link });
+        let products = JSON.parse(localStorage.getItem('myProducts')) || initialProducts;
+
+        /* 파일 업로드 처리 */
+        function handleFileSelect(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedFileBase64 = e.target.result;
+                    document.getElementById('p-image').value = "";
+                    document.getElementById('p-image').placeholder = "파일이 선택되었습니다.";
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
         }
 
-        resetForm();
-        renderProducts();
-        alert('저장되었습니다!');
-    }
+        /* 관리자 인증 로직 */
+        function handleAdminToggle() {
+            if (!isAdminAuthenticated) {
+                const inputPw = prompt("관리자 비밀번호를 입력해주세요.");
+                if (inputPw === adminPassword) {
+                    isAdminAuthenticated = true;
+                    alert("인증되었습니다.");
+                    showAdminPanel();
+                } else if (inputPw !== null) {
+                    alert("비밀번호가 틀렸습니다.");
+                }
+            } else {
+                toggleAdminPanel();
+            }
+        }
 
-    function editProduct(id) {
-        const p = products.find(p => p.id == id);
-        document.getElementById('edit-id').value = p.id;
-        document.getElementById('p-name').value = p.name;
-        document.getElementById('p-price').value = p.price;
-        document.getElementById('p-category').value = p.category;
-        document.getElementById('p-badge').value = p.badge;
-        document.getElementById('p-image').value = "";
-        document.getElementById('p-image').placeholder = "수정 시 이미지를 변경하려면 업로드하거나 URL을 입력하세요.";
-        document.getElementById('p-link').value = p.link;
-        document.getElementById('save-btn').innerText = "상품 정보 수정 완료";
-        
-        selectedFileBase64 = "";
-        document.getElementById('p-file').value = "";
-
-        window.scrollTo({ top: document.getElementById('admin-panel').offsetTop - 20, behavior: 'smooth' });
-    }
-
-    function deleteProduct(id) {
-        if (!isAdminAuthenticated) return;
-        if(confirm('정말 삭제할까요?')) {
-            products = products.filter(p => p.id != id);
+        function showAdminPanel() {
+            document.getElementById('admin-panel').style.display = 'block';
+            document.getElementById('admin-main-btn').innerText = "관리자 도구 닫기";
             renderProducts();
         }
-    }
 
-    function resetForm() {
-        document.getElementById('edit-id').value = '';
-        document.getElementById('p-name').value = '';
-        document.getElementById('p-price').value = '';
-        document.getElementById('p-image').value = '';
-        document.getElementById('p-image').placeholder = "이미지 URL 주소를 직접 입력하세요";
-        document.getElementById('p-file').value = "";
-        document.getElementById('p-link').value = '';
-        document.getElementById('save-btn').innerText = "상품 등록하기";
-        selectedFileBase64 = "";
-    }
+        function toggleAdminPanel() {
+            const panel = document.getElementById('admin-panel');
+            const isVisible = panel.style.display === 'block';
+            panel.style.display = isVisible ? 'none' : 'block';
+            document.getElementById('admin-main-btn').innerText = isVisible ? "관리자 도구 열기" : "관리자 도구 닫기";
+            renderProducts();
+        }
 
-    renderProducts();
-</script>
+        function logoutAdmin() {
+            isAdminAuthenticated = false;
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('admin-main-btn').innerText = "관리자 접속";
+            alert("로그아웃 되었습니다.");
+            renderProducts();
+        }
+
+        /* 카테고리 필터링 */
+        function filterCategory(category) {
+            currentCategory = category;
+            
+            const buttons = document.querySelectorAll('#category-menu button');
+            buttons.forEach(btn => {
+                btn.classList.toggle('active', btn.innerText === category);
+            });
+
+            const title = document.getElementById('current-category-title');
+            title.innerText = category === '전체' ? '✨ 오늘의 추천 건강템' : `🔍 ${category} 추천 아이템`;
+
+            renderProducts();
+        }
+
+        /* 상품 리스트 렌더링 */
+        function renderProducts() {
+            const list = document.getElementById('product-list');
+            list.innerHTML = '';
+
+            const filteredProducts = currentCategory === "전체" 
+                ? products 
+                : products.filter(p => p.category === currentCategory);
+
+            if (filteredProducts.length === 0) {
+                list.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 50px; color: #999;">이 카테고리에는 아직 상품이 없습니다.</p>`;
+            }
+
+            filteredProducts.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                
+                const isAdminVisible = isAdminAuthenticated && document.getElementById('admin-panel').style.display === 'block';
+
+                card.innerHTML = `
+                    <span class="badge">${p.badge}</span>
+                    <a href="${p.link}" class="product-link" target="_blank">
+                        <div class="product-img">
+                            <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300?text=이미지+오류'">
+                        </div>
+                        <h3 class="product-name">${p.name}</h3>
+                    </a>
+                    <p class="product-price">${p.price}</p>
+                    <a href="${p.link}" class="buy-btn" target="_blank">쿠팡 최저가 확인하기</a>
+                    <div class="admin-actions" style="display:${isAdminVisible ? 'flex' : 'none'}">
+                        <button onclick="editProduct(${p.id})">수정</button>
+                        <button class="del-btn" onclick="deleteProduct(${p.id})">삭제</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+            localStorage.setItem('myProducts', JSON.stringify(products));
+        }
+
+        /* 상품 저장 (C/U) */
+        function saveProduct() {
+            if (!isAdminAuthenticated) return alert("권한이 없습니다.");
+
+            const id = document.getElementById('edit-id').value;
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            const category = document.getElementById('p-category').value;
+            const badge = document.getElementById('p-badge').value;
+            const urlImg = document.getElementById('p-image').value;
+            const link = document.getElementById('p-link').value || '#';
+
+            let finalImg = selectedFileBase64 || urlImg || 'https://via.placeholder.com/300';
+
+            if(!name || !price) return alert('상품명과 가격을 입력해주세요!');
+
+            if (id) {
+                const index = products.findIndex(p => p.id == id);
+                if (!selectedFileBase64 && !urlImg) finalImg = products[index].img;
+                products[index] = { id: Number(id), name, price, category, badge, img: finalImg, link };
+            } else {
+                products.push({ id: Date.now(), name, price, category, badge, img: finalImg, link });
+            }
+
+            resetForm();
+            renderProducts();
+            alert('저장되었습니다!');
+        }
+
+        /* 수정 모드 */
+        function editProduct(id) {
+            const p = products.find(p => p.id == id);
+            document.getElementById('edit-id').value = p.id;
+            document.getElementById('p-name').value = p.name;
+            document.getElementById('p-price').value = p.price;
+            document.getElementById('p-category').value = p.category;
+            document.getElementById('p-badge').value = p.badge;
+            document.getElementById('p-image').value = "";
+            document.getElementById('p-image').placeholder = "수정 시 이미지를 변경하려면 업로드하거나 URL을 입력하세요.";
+            document.getElementById('p-link').value = p.link;
+            document.getElementById('save-btn').innerText = "상품 정보 수정 완료";
+            
+            selectedFileBase64 = "";
+            document.getElementById('p-file').value = "";
+
+            window.scrollTo({ top: document.getElementById('admin-panel').offsetTop - 20, behavior: 'smooth' });
+        }
+
+        /* 삭제 (D) */
+        function deleteProduct(id) {
+            if (!isAdminAuthenticated) return;
+            if(confirm('정말 삭제할까요?')) {
+                products = products.filter(p => p.id != id);
+                renderProducts();
+            }
+        }
+
+        /* 폼 초기화 */
+        function resetForm() {
+            document.getElementById('edit-id').value = '';
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-price').value = '';
+            document.getElementById('p-image').value = '';
+            document.getElementById('p-image').placeholder = "이미지 URL 주소를 직접 입력하세요";
+            document.getElementById('p-file').value = "";
+            document.getElementById('p-link').value = '';
+            document.getElementById('save-btn').innerText = "상품 등록하기";
+            selectedFileBase64 = "";
+        }
+
+        renderProducts();
+    </script>
 
 </body>
 </html>
