@@ -3,558 +3,574 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>꿀건강 큐레이션 - 관리자 보안 모드</title>
+    <!-- SEO 최적화 메타 태그 -->
+    <title>나의 귀여운 블로그 | 일상의 소중한 기록</title>
+    <meta name="description" content="소소하고 귀여운 일상을 기록하는 포비의 개인 블로그입니다. 일상, 공부, 여행 이야기를 만나보세요.">
+    <meta name="keywords" content="블로그, 일상기록, 귀여운블로그, 포비로그, 일상, 공부, 여행">
+    <meta property="og:title" content="나의 귀여운 블로그">
+    <meta property="og:description" content="소소하고 귀여운 일상의 이야기들을 기록합니다.">
+    <meta property="og:type" content="website">
+    <link rel="canonical" href="https://your-blog-url.com">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* =========================================
-           1. CSS 변수 및 초기화
-           ========================================= */
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-
         :root {
-            --main-pink: #FFDDE2;
-            --main-yellow: #FFF9C4;
-            --point-blue: #A1C4FD;
-            --soft-gray: #F8F9FA;
-            --text-dark: #5D5D5D;
-            --coupang-color: #3776AB;
-            --admin-color: #6c5ce7;
+            --primary-color: #ffb7b2; /* 파스텔 핑크 */
+            --secondary-color: #ffdac1; /* 파스텔 오렌지 */
+            --accent-color: #baffc9; /* 파스텔 그린 */
+            --text-color: #555;
+            --bg-color: #fff9f9;
+            --white: #ffffff;
+            --shadow: 0 4px 15px rgba(0,0,0,0.05);
+            --danger-color: #ff6b6b;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Pretendard', sans-serif;
-            background-color: var(--soft-gray);
-            color: var(--text-dark);
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             line-height: 1.6;
-            word-break: keep-all;
+            overflow-x: hidden;
         }
 
-        .container { 
-            max-width: 900px; 
-            margin: 0 auto; 
-            padding: 0 16px;
+        h1, h2, h3, .logo {
+            font-family: 'Gaegu', cursive;
         }
 
-        /* =========================================
-           2. 헤더 및 네비게이션 스타일
-           ========================================= */
-        header {
-            margin: 16px;
-            height: 35vh;
-            min-height: 250px;
-            background-image: url('http://googleusercontent.com/image_generation_content/1');
-            background-size: cover;
-            background-position: center;
-            border-radius: 30px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-        }
-
-        .header-content {
-            position: absolute;
-            bottom: 0; width: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(8px);
-            padding: 20px 16px;
-            text-align: center;
-        }
-
-        .blog-name {
-            font-size: 28px;
-            font-weight: 800;
-            color: #FF8E9E;
-            text-decoration: none;
-            display: block;
-            margin-bottom: 12px;
-        }
-
-        .nav-wrap { 
-            overflow-x: auto; 
-            white-space: nowrap; 
-            padding-bottom: 10px;
-        }
-        .nav-wrap::-webkit-scrollbar { display: none; }
-        
-        .nav-links {
-            list-style: none;
-            display: inline-flex;
-            gap: 8px;
-        }
-        
-        .nav-links li button {
-            appearance: none;
-            background: white;
-            border: 1px solid #eee;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #777;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .nav-links li button.active {
-            background: var(--point-blue);
-            color: white;
-            border-color: var(--point-blue);
-        }
-
-        /* =========================================
-           3. 관리자 패널 스타일
-           ========================================= */
-        .admin-toggle-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: var(--admin-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        #admin-panel {
-            display: none;
-            background: white;
-            margin: 16px;
-            padding: 24px;
-            border-radius: 24px;
-            border: 2px dashed var(--admin-color);
-        }
-
-        .admin-form {
-            display: grid;
-            gap: 12px;
-            grid-template-columns: 1fr 1fr;
-        }
-        
-        .admin-form input, .admin-form select {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            font-size: 14px;
-            width: 100%;
-        }
-        
-        .admin-form .full { grid-column: span 2; }
-        
-        .file-upload-wrapper {
-            grid-column: span 2;
+        /* Navigation */
+        nav {
+            background: var(--white);
+            padding: 1rem 2rem;
             display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .file-label {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--admin-color);
-        }
-        
-        .file-input-group {
-            display: flex;
-            gap: 10px;
+            justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
         }
-        
-        #p-file { flex: 1; }
 
-        .admin-form button#save-btn {
-            grid-column: span 2;
-            padding: 14px;
-            background: var(--admin-color);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-weight: 700;
+        .logo {
+            font-size: 2rem;
+            color: var(--primary-color);
             cursor: pointer;
-            margin-top: 10px;
         }
 
-        /* =========================================
-           4. 상품 카드 및 그리드 스타일
-           ========================================= */
-        main { padding: 32px 0; }
-        
-        .section-title { 
-            font-size: 20px; 
-            margin-bottom: 20px; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: 1fr;
+        .nav-links {
+            display: flex;
             gap: 20px;
         }
-        @media (min-width: 500px) { .product-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 800px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
 
-        .product-card {
-            background: white;
-            border-radius: 24px;
-            padding: 16px;
-            text-align: center;
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Hero Section */
+        header.hero {
+            height: 300px;
+            background: linear-gradient(rgba(255,183,178,0.3), rgba(255,218,193,0.3)), 
+                        url('https://images.unsplash.com/photo-1516550893923-42d28e5677af?ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80');
+            background-size: cover;
+            background-position: center;
             display: flex;
             flex-direction: column;
-            border: 1px solid #f0f0f0;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #444;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px var(--white);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px 50px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 { font-size: 2.5rem; }
+        }
+
+        /* Search Section */
+        .search-box {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .search-input-group {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .search-engines {
+            display: flex;
+            justify-content: space-around;
+            gap: 5px;
+        }
+
+        .search-engines button {
+            flex: 1;
+            font-size: 0.8rem;
+            padding: 8px 5px;
+        }
+
+        /* Post Cards */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .post-card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
             position: relative;
         }
 
-        .product-img {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            background: #f9f9f9;
-            border-radius: 18px;
-            margin-bottom: 12px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .post-card:hover {
+            transform: translateY(-5px);
         }
-        
-        .product-img img { width: 100%; height: 100%; object-fit: cover; }
 
-        .badge {
-            background: var(--main-pink);
-            color: white;
-            font-size: 10px;
-            padding: 3px 10px;
-            border-radius: 10px;
+        .post-card h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .post-meta {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+
+        .admin-controls {
             position: absolute;
-            top: 24px; left: 24px;
-            z-index: 5;
-        }
-
-        .product-name { 
-            font-weight: 700; 
-            font-size: 16px; 
-            margin-bottom: 6px; 
-            color: #333; 
-            height: 2.8em; 
-            overflow: hidden; 
-        }
-        
-        .product-price { 
-            color: #FF4D6D; 
-            font-weight: 800; 
-            font-size: 18px; 
-            margin-bottom: 12px; 
-        }
-
-        .buy-btn {
-            display: block;
-            background: var(--coupang-color);
-            color: white;
-            text-decoration: none;
-            padding: 12px;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 14px;
-            margin-top: auto;
-        }
-
-        /* 관리자용 액션 버튼 */
-        .admin-actions {
-            margin-top: 10px;
-            display: none;
+            top: 20px;
+            right: 20px;
+            display: flex;
             gap: 5px;
         }
-        
-        .admin-actions button {
-            flex: 1;
-            padding: 5px;
-            font-size: 11px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            cursor: pointer;
-            background: #fdfdfd;
-        }
-        
-        .del-btn { color: #ff4d4d; }
 
-        footer { padding: 40px 16px; text-align: center; color: #bbb; font-size: 12px; }
+        .btn-mini {
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            border-radius: 5px;
+        }
+
+        .btn-delete { background: var(--danger-color); color: white; }
+
+        /* Tag hidden per request */
+        .tag {
+            display: none !important;
+        }
+
+        /* Sidebar */
+        aside {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-box {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar-box h3 {
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--secondary-color);
+            display: inline-block;
+        }
+
+        .category-list {
+            list-style: none;
+        }
+
+        .category-list li {
+            padding: 5px 0;
+            cursor: pointer;
+            transition: padding-left 0.3s;
+        }
+
+        .category-list li:hover {
+            padding-left: 10px;
+            color: var(--primary-color);
+        }
+
+        /* Write Form */
+        #write-section {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-secondary { background: var(--secondary-color); color: var(--text-color); }
+        .btn-accent { background: var(--accent-color); color: var(--text-color); }
+
+        /* Guestbook */
+        #guestbook-section {
+            display: none;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .guestbook-item {
+            border-bottom: 1px dashed #eee;
+            padding: 15px 0;
+        }
+
     </style>
 </head>
 <body>
 
-    <!-- 관리자 접속 버튼 -->
-    <button id="admin-main-btn" class="admin-toggle-btn" onclick="handleAdminToggle()">관리자 접속</button>
-
-    <!-- 1. 헤더 영역 -->
-    <header class="container">
-        <div class="header-content">
-            <a href="javascript:filterCategory('전체')" class="blog-name">🍯 꿀건강 큐레이션</a>
-            <nav class="nav-wrap">
-                <ul class="nav-links" id="category-menu">
-                    <li><button class="active" onclick="filterCategory('전체')">전체</button></li>
-                    <li><button onclick="filterCategory('식단관리')">식단관리</button></li>
-                    <li><button onclick="filterCategory('영양제')">영양제</button></li>
-                    <li><button onclick="filterCategory('운동기구')">운동기구</button></li>
-                    <li><button onclick="filterCategory('홈트')">홈트</button></li>
-                    <li><button onclick="filterCategory('멘탈케어')">멘탈케어</button></li>
-                </ul>
-            </nav>
+    <nav>
+        <div class="logo" onclick="showSection('home')">포비로그 🐾</div>
+        <div class="nav-links">
+            <a onclick="showSection('home')">홈</a>
+            <a onclick="adminCheck('write')">글쓰기</a>
+            <a onclick="showSection('guestbook')">방명록</a>
         </div>
+    </nav>
+
+    <header id="home-hero" class="hero">
+        <h1>오늘의 기록들</h1>
+        <p>소소하고 귀여운 일상의 이야기</p>
     </header>
 
-    <!-- 2. 관리자 패널 영역 -->
-    <section id="admin-panel" class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 style="color:var(--admin-color);">📦 상품 관리 도구</h3>
-            <button onclick="logoutAdmin()" style="background: #eee; border:none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px;">로그아웃</button>
-        </div>
-        <div class="admin-form">
-            <input type="hidden" id="edit-id">
-            <input type="text" id="p-name" placeholder="상품명" class="full">
-            <input type="text" id="p-price" placeholder="가격 (예: 24,900원)">
-            
-            <select id="p-category">
-                <option value="식단관리">식단관리</option>
-                <option value="영양제">영양제</option>
-                <option value="운동기구">운동기구</option>
-                <option value="홈트">홈트</option>
-                <option value="멘탈케어">멘탈케어</option>
-            </select>
-            
-            <select id="p-badge">
-                <option value="추천">추천</option>
-                <option value="BEST">BEST</option>
-                <option value="인기">인기</option>
-                <option value="신상">신상</option>
-            </select>
-            
-            <div class="file-upload-wrapper full">
-                <label class="file-label">📸 상품 이미지 등록</label>
-                <div class="file-input-group">
-                    <input type="file" id="p-file" accept="image/*" onchange="handleFileSelect(this)">
-                    <span style="font-size: 12px; color: #999;">또는</span>
+    <div class="container">
+        <!-- 메인 콘텐츠 영역 -->
+        <main>
+            <!-- 블로그 리스트 섹션 -->
+            <section id="home-section" class="post-list">
+                <article class="post-card" id="post-initial">
+                    <div class="admin-controls">
+                        <button class="btn-mini btn-secondary" onclick="editPost('post-initial')">수정</button>
+                        <button class="btn-mini btn-delete" onclick="deletePost('post-initial')">삭제</button>
+                    </div>
+                    <header>
+                        <div class="post-meta">2024.05.20 | 일상</div>
+                        <h2 class="title">어서오세요! 첫 번째 글입니다.</h2>
+                    </header>
+                    <p class="content">이곳은 귀엽고 심플한 블로그입니다. 오른쪽 사이드바에서 카테고리를 확인하거나 상단 메뉴에서 직접 글을 써보세요!</p>
+                </article>
+                <!-- 글이 추가될 위치 -->
+            </section>
+
+            <!-- 글쓰기 섹션 -->
+            <section id="write-section">
+                <h2 id="write-title">새 글 작성하기 ✨</h2>
+                <input type="hidden" id="edit-id" value="">
+                <div class="form-group">
+                    <label for="post-title">제목 (h2)</label>
+                    <input type="text" id="post-title" placeholder="제목을 입력하세요">
                 </div>
-                <input type="text" id="p-image" placeholder="이미지 URL 주소를 직접 입력하세요">
+                <div class="form-group">
+                    <label for="post-category">카테고리</label>
+                    <select id="post-category">
+                        <option value="일상">일상</option>
+                        <option value="공부">공부</option>
+                        <option value="여행">여행</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="post-content">내용</label>
+                    <textarea id="post-content" rows="10" placeholder="내용을 입력하세요."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="post-image">이미지 URL (선택)</label>
+                    <input type="text" id="post-image" placeholder="https://example.com/image.jpg">
+                </div>
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="savePost()">저장하기</button>
+                    <button class="btn-secondary" onclick="showSection('home')">취소</button>
+                </div>
+            </section>
+
+            <!-- 방명록 섹션 -->
+            <section id="guestbook-section">
+                <h2>방명록 💌</h2>
+                <div class="form-group">
+                    <textarea id="guest-msg" rows="3" placeholder="남길 메시지를 적어주세요!"></textarea>
+                </div>
+                <button class="btn-accent" onclick="addGuestMsg()">남기기</button>
+                <div id="guestbook-list" style="margin-top:30px;">
+                    <div class="guestbook-item">
+                        <strong>포비:</strong> 반가워요! 자주 놀러오세요.
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 사이드바 -->
+        <aside>
+            <!-- 통합 검색창 -->
+            <div class="sidebar-box search-box">
+                <h3>외부 검색</h3>
+                <div class="search-input-group">
+                    <input type="text" id="external-search-query" placeholder="검색어를 입력하세요">
+                </div>
+                <div class="search-engines">
+                    <button class="btn-primary" onclick="externalSearch('google')">Google</button>
+                    <button class="btn-secondary" onclick="externalSearch('naver')">Naver</button>
+                    <button class="btn-accent" onclick="externalSearch('daum')">Daum</button>
+                </div>
             </div>
-            
-            <input type="text" id="p-link" placeholder="쿠팡 파트너스 링크" class="full">
-            <button id="save-btn" onclick="saveProduct()">상품 등록/수정하기</button>
-        </div>
-    </section>
 
-    <!-- 3. 메인 상품 리스트 영역 -->
-    <main class="container">
-        <h2 class="section-title" id="current-category-title">✨ 오늘의 추천 건강템</h2>
-        <div id="product-list" class="product-grid">
-            <!-- 자바스크립트로 렌더링됨 -->
-        </div>
-    </main>
+            <div class="sidebar-box">
+                <h3>카테고리</h3>
+                <ul class="category-list">
+                    <li onclick="filterCategory('일상')">일상</li>
+                    <li onclick="filterCategory('공부')">공부</li>
+                    <li onclick="filterCategory('여행')">여행</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
 
-    <!-- 4. 푸터 영역 -->
-    <footer>
-        <p>&copy; 2026 꿀건강 큐레이션. 이 포스팅은 쿠팡 파트너스 활동의 일환으로 일정액의 수수료를 제공받을 수 있습니다.</p>
-    </footer>
-
-    <!-- =========================================
-         5. 자바스크립트 로직
-         ========================================= -->
     <script>
-        const adminPassword = "04070036"; 
-        let isAdminAuthenticated = false;
-        let selectedFileBase64 = "";
-        let currentCategory = "전체";
+        // 관리자 비밀번호 (데모용)
+        const ADMIN_PW = "04070036";
 
-        // 초기 샘플 데이터
-        const initialProducts = [
-            { id: 1, name: "고함량 비타민 C 3000mg", price: "24,900원", badge: "추천", category: "영양제", img: "https://via.placeholder.com/300", link: "#" },
-            { id: 2, name: "TPE 논슬립 요가매트", price: "18,500원", badge: "BEST", category: "운동기구", img: "https://via.placeholder.com/300", link: "#" },
-            { id: 3, name: "닭가슴살 스테이크 10팩", price: "15,900원", badge: "신상", category: "식단관리", img: "https://via.placeholder.com/300", link: "#" }
-        ];
-
-        let products = JSON.parse(localStorage.getItem('myProducts')) || initialProducts;
-
-        /* 파일 업로드 처리 */
-        function handleFileSelect(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    selectedFileBase64 = e.target.result;
-                    document.getElementById('p-image').value = "";
-                    document.getElementById('p-image').placeholder = "파일이 선택되었습니다.";
-                };
-                reader.readAsDataURL(input.files[0]);
+        // 관리자 확인 함수
+        function adminCheck(targetAction, data) {
+            const input = prompt("관리자 비밀번호를 입력하세요:");
+            if (input === ADMIN_PW) {
+                if (targetAction === 'write') showSection('write');
+                return true;
+            } else {
+                alert("비밀번호가 틀렸습니다!");
+                return false;
             }
         }
 
-        /* 관리자 인증 로직 */
-        function handleAdminToggle() {
-            if (!isAdminAuthenticated) {
-                const inputPw = prompt("관리자 비밀번호를 입력해주세요.");
-                if (inputPw === adminPassword) {
-                    isAdminAuthenticated = true;
-                    alert("인증되었습니다.");
-                    showAdminPanel();
-                } else if (inputPw !== null) {
-                    alert("비밀번호가 틀렸습니다.");
+        // 섹션 전환 함수
+        function showSection(section) {
+            const home = document.getElementById('home-section');
+            const write = document.getElementById('write-section');
+            const guest = document.getElementById('guestbook-section');
+            const hero = document.getElementById('home-hero');
+
+            // 초기화
+            document.getElementById('edit-id').value = "";
+            document.getElementById('write-title').innerText = "새 글 작성하기 ✨";
+
+            home.style.display = 'none';
+            write.style.display = 'none';
+            guest.style.display = 'none';
+            hero.style.display = 'none';
+
+            if (section === 'home') {
+                home.style.display = 'flex';
+                hero.style.display = 'flex';
+            } else if (section === 'write') {
+                write.style.display = 'block';
+            } else if (section === 'guestbook') {
+                guest.style.display = 'block';
+            }
+        }
+
+        // 외부 검색 기능
+        function externalSearch(engine) {
+            const query = document.getElementById('external-search-query').value;
+            if(!query) {
+                alert('검색어를 입력해주세요!');
+                return;
+            }
+
+            let url = '';
+            switch(engine) {
+                case 'google': url = `https://www.google.com/search?q=${encodeURIComponent(query)}`; break;
+                case 'naver': url = `https://search.naver.com/search.naver?query=${encodeURIComponent(query)}`; break;
+                case 'daum': url = `https://search.daum.net/search?q=${encodeURIComponent(query)}`; break;
+            }
+            window.open(url, '_blank');
+        }
+
+        // 글 저장 기능 (In-memory)
+        function savePost() {
+            const title = document.getElementById('post-title').value;
+            const category = document.getElementById('post-category').value;
+            const content = document.getElementById('post-content').value;
+            const image = document.getElementById('post-image').value;
+            const editId = document.getElementById('edit-id').value;
+
+            if(!title || !content) {
+                alert('제목과 내용을 입력해주세요!');
+                return;
+            }
+
+            if (editId) {
+                // 수정 모드
+                const article = document.getElementById(editId);
+                article.querySelector('.title').innerText = title;
+                article.querySelector('.content').innerHTML = content.replace(/\n/g, '<br>');
+                const existingImg = article.querySelector('.post-img');
+                if (image) {
+                    if (existingImg) existingImg.src = image;
+                    else {
+                        const newImg = document.createElement('img');
+                        newImg.src = image;
+                        newImg.className = 'post-img';
+                        newImg.style = "width:100%; border-radius:15px; margin:15px 0;";
+                        article.appendChild(newImg);
+                    }
+                } else if (existingImg) {
+                    existingImg.remove();
                 }
             } else {
-                toggleAdminPanel();
-            }
-        }
+                // 신규 작성
+                const postList = document.getElementById('home-section');
+                const date = new Date().toLocaleDateString();
+                const newId = 'post-' + Date.now();
 
-        function showAdminPanel() {
-            document.getElementById('admin-panel').style.display = 'block';
-            document.getElementById('admin-main-btn').innerText = "관리자 도구 닫기";
-            renderProducts();
-        }
-
-        function toggleAdminPanel() {
-            const panel = document.getElementById('admin-panel');
-            const isVisible = panel.style.display === 'block';
-            panel.style.display = isVisible ? 'none' : 'block';
-            document.getElementById('admin-main-btn').innerText = isVisible ? "관리자 도구 열기" : "관리자 도구 닫기";
-            renderProducts();
-        }
-
-        function logoutAdmin() {
-            isAdminAuthenticated = false;
-            document.getElementById('admin-panel').style.display = 'none';
-            document.getElementById('admin-main-btn').innerText = "관리자 접속";
-            alert("로그아웃 되었습니다.");
-            renderProducts();
-        }
-
-        /* 카테고리 필터링 */
-        function filterCategory(category) {
-            currentCategory = category;
-            
-            const buttons = document.querySelectorAll('#category-menu button');
-            buttons.forEach(btn => {
-                btn.classList.toggle('active', btn.innerText === category);
-            });
-
-            const title = document.getElementById('current-category-title');
-            title.innerText = category === '전체' ? '✨ 오늘의 추천 건강템' : `🔍 ${category} 추천 아이템`;
-
-            renderProducts();
-        }
-
-        /* 상품 리스트 렌더링 */
-        function renderProducts() {
-            const list = document.getElementById('product-list');
-            list.innerHTML = '';
-
-            const filteredProducts = currentCategory === "전체" 
-                ? products 
-                : products.filter(p => p.category === currentCategory);
-
-            if (filteredProducts.length === 0) {
-                list.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 50px; color: #999;">이 카테고리에는 아직 상품이 없습니다.</p>`;
-            }
-
-            filteredProducts.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
+                const article = document.createElement('article');
+                article.className = 'post-card';
+                article.id = newId;
                 
-                const isAdminVisible = isAdminAuthenticated && document.getElementById('admin-panel').style.display === 'block';
-
-                card.innerHTML = `
-                    <span class="badge">${p.badge}</span>
-                    <a href="${p.link}" class="product-link" target="_blank">
-                        <div class="product-img">
-                            <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300?text=이미지+오류'">
-                        </div>
-                        <h3 class="product-name">${p.name}</h3>
-                    </a>
-                    <p class="product-price">${p.price}</p>
-                    <a href="${p.link}" class="buy-btn" target="_blank">쿠팡 최저가 확인하기</a>
-                    <div class="admin-actions" style="display:${isAdminVisible ? 'flex' : 'none'}">
-                        <button onclick="editProduct(${p.id})">수정</button>
-                        <button class="del-btn" onclick="deleteProduct(${p.id})">삭제</button>
+                let imgHtml = image ? `<img src="${image}" class="post-img" alt="${title}" style="width:100%; border-radius:15px; margin:15px 0;">` : '';
+                
+                article.innerHTML = `
+                    <div class="admin-controls">
+                        <button class="btn-mini btn-secondary" onclick="editPost('${newId}')">수정</button>
+                        <button class="btn-mini btn-delete" onclick="deletePost('${newId}')">삭제</button>
                     </div>
+                    <header>
+                        <div class="post-meta">${date} | ${category}</div>
+                        <h2 class="title">${title}</h2>
+                    </header>
+                    <div class="entry-content content">
+                        ${content.replace(/\n/g, '<br>')}
+                    </div>
+                    ${imgHtml}
                 `;
-                list.appendChild(card);
-            });
-            localStorage.setItem('myProducts', JSON.stringify(products));
-        }
-
-        /* 상품 저장 (C/U) */
-        function saveProduct() {
-            if (!isAdminAuthenticated) return alert("권한이 없습니다.");
-
-            const id = document.getElementById('edit-id').value;
-            const name = document.getElementById('p-name').value;
-            const price = document.getElementById('p-price').value;
-            const category = document.getElementById('p-category').value;
-            const badge = document.getElementById('p-badge').value;
-            const urlImg = document.getElementById('p-image').value;
-            const link = document.getElementById('p-link').value || '#';
-
-            let finalImg = selectedFileBase64 || urlImg || 'https://via.placeholder.com/300';
-
-            if(!name || !price) return alert('상품명과 가격을 입력해주세요!');
-
-            if (id) {
-                const index = products.findIndex(p => p.id == id);
-                if (!selectedFileBase64 && !urlImg) finalImg = products[index].img;
-                products[index] = { id: Number(id), name, price, category, badge, img: finalImg, link };
-            } else {
-                products.push({ id: Date.now(), name, price, category, badge, img: finalImg, link });
+                postList.prepend(article);
             }
-
-            resetForm();
-            renderProducts();
-            alert('저장되었습니다!');
-        }
-
-        /* 수정 모드 */
-        function editProduct(id) {
-            const p = products.find(p => p.id == id);
-            document.getElementById('edit-id').value = p.id;
-            document.getElementById('p-name').value = p.name;
-            document.getElementById('p-price').value = p.price;
-            document.getElementById('p-category').value = p.category;
-            document.getElementById('p-badge').value = p.badge;
-            document.getElementById('p-image').value = "";
-            document.getElementById('p-image').placeholder = "수정 시 이미지를 변경하려면 업로드하거나 URL을 입력하세요.";
-            document.getElementById('p-link').value = p.link;
-            document.getElementById('save-btn').innerText = "상품 정보 수정 완료";
             
-            selectedFileBase64 = "";
-            document.getElementById('p-file').value = "";
-
-            window.scrollTo({ top: document.getElementById('admin-panel').offsetTop - 20, behavior: 'smooth' });
+            // 초기화
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-content').value = '';
+            document.getElementById('post-image').value = '';
+            
+            alert('완료되었습니다!');
+            showSection('home');
         }
 
-        /* 삭제 (D) */
-        function deleteProduct(id) {
-            if (!isAdminAuthenticated) return;
-            if(confirm('정말 삭제할까요?')) {
-                products = products.filter(p => p.id != id);
-                renderProducts();
+        // 수정 기능
+        function editPost(id) {
+            if (!adminCheck()) return;
+            
+            const article = document.getElementById(id);
+            const title = article.querySelector('.title').innerText;
+            const content = article.querySelector('.content').innerHTML.replace(/<br>/g, '\n');
+            const img = article.querySelector('.post-img');
+
+            showSection('write');
+            document.getElementById('write-title').innerText = "게시글 수정하기 ✏️";
+            document.getElementById('edit-id').value = id;
+            document.getElementById('post-title').value = title;
+            document.getElementById('post-content').value = content;
+            if (img) document.getElementById('post-image').value = img.src;
+        }
+
+        // 삭제 기능
+        function deletePost(id) {
+            if (!adminCheck()) return;
+            if (confirm("정말로 이 글을 삭제할까요?")) {
+                document.getElementById(id).remove();
             }
         }
 
-        /* 폼 초기화 */
-        function resetForm() {
-            document.getElementById('edit-id').value = '';
-            document.getElementById('p-name').value = '';
-            document.getElementById('p-price').value = '';
-            document.getElementById('p-image').value = '';
-            document.getElementById('p-image').placeholder = "이미지 URL 주소를 직접 입력하세요";
-            document.getElementById('p-file').value = "";
-            document.getElementById('p-link').value = '';
-            document.getElementById('save-btn').innerText = "상품 등록하기";
-            selectedFileBase64 = "";
+        // 방명록 추가 (누구나 가능)
+        function addGuestMsg() {
+            const msg = document.getElementById('guest-msg').value;
+            if(!msg) return;
+
+            const list = document.getElementById('guestbook-list');
+            const item = document.createElement('div');
+            item.className = 'guestbook-item';
+            item.innerHTML = `<strong>방문자:</strong> ${msg}`;
+            
+            list.prepend(item);
+            document.getElementById('guest-msg').value = '';
         }
 
-        renderProducts();
+        function filterCategory(name) {
+            alert(name + ' 카테고리 필터 기능입니다.');
+        }
     </script>
-
 </body>
 </html>
